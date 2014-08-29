@@ -7,4 +7,7 @@ cover:
 format:
 	gofmt -l -w *.go
 
-.PHONY: cover test format
+vet:
+	go tool vet -v *.go
+
+.PHONY: cover test format vet

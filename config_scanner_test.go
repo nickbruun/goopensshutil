@@ -110,6 +110,16 @@ var (
 		false,
 	}
 
+	configScannerLineFixtureVK = configScannerLineFixture{
+		"Host = =hello",
+		[]configScannerOutput{
+			{CT_KEYWORD, "Host"},
+			{CT_EQUAL, "="},
+			{CT_STRING, "=hello"},
+		},
+		false,
+	}
+
 	configScannerLineFixturesValid = []configScannerLineFixture{
 		configScannerLineFixtureVA,
 		configScannerLineFixtureVB,
@@ -121,6 +131,7 @@ var (
 		configScannerLineFixtureVH,
 		configScannerLineFixtureVI,
 		configScannerLineFixtureVJ,
+		configScannerLineFixtureVK,
 	}
 
 	// Erroneous fixtures.
@@ -134,8 +145,38 @@ var (
 		true,
 	}
 
+	configScannerLineFixtureEB = configScannerLineFixture{
+		"Host \"Unexpected end of file",
+		[]configScannerOutput{
+			{CT_KEYWORD, "Host"},
+			{CT_STRING, "Unexpected end of file"},
+		},
+		true,
+	}
+
+	configScannerLineFixtureEC = configScannerLineFixture{
+		"Host \"Unexpected end of line\n",
+		[]configScannerOutput{
+			{CT_KEYWORD, "Host"},
+			{CT_STRING, "Unexpected end of line"},
+		},
+		true,
+	}
+
+	configScannerLineFixtureED = configScannerLineFixture{
+		"Host " + string(0),
+		[]configScannerOutput{
+			{CT_KEYWORD, "Host"},
+			{CT_ILLEGAL, string(0)},
+		},
+		true,
+	}
+
 	configScannerLineFixturesErroneous = []configScannerLineFixture{
 		configScannerLineFixtureEA,
+		configScannerLineFixtureEB,
+		configScannerLineFixtureEC,
+		configScannerLineFixtureED,
 	}
 
 	// All fixtures.
@@ -177,7 +218,7 @@ func testConfigScannerOutputFixture(t *testing.T, src string, expectedOutput []c
 
 	if !equal {
 		t.Errorf("Scan output mismatch for source `%s`, expected %v but got %v", src, expectedOutput, output)
-	} else if expectedErr && err == nil {
+	} else if expectedErr && err == nil && output[len(output)-1].Token != CT_ILLEGAL {
 		t.Errorf("Expected scan error for source `%s`", src)
 	} else if !expectedErr && err != nil {
 		t.Errorf("Unepxected scan error source `%s`: %v", src, err)

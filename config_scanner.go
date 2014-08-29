@@ -104,10 +104,12 @@ func (s *configScanner) scanQuotedString() string {
 
 	case qch:
 		s.expectWs = true
-		s.next()
 	}
 
-	return string(s.src[start : s.offset-1])
+	end := s.offset
+	s.next()
+
+	return string(s.src[start : end])
 }
 
 // Scan keyword or string.
