@@ -105,7 +105,7 @@ func (s *configScanner) scanQuotedString() string {
 	end := s.offset
 	s.next()
 
-	return string(s.src[start : end])
+	return string(s.src[start:end])
 }
 
 // Scan keyword or string.

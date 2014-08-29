@@ -77,8 +77,8 @@ func ParseConfig(src []byte) (c *Config, err error) {
 			case "host":
 				host = &HostConfig{
 					HostPatterns: args,
-					Options: make(ConfigOptionMap),
-					Matches: make([]HostMatchConfig, 0),
+					Options:      make(ConfigOptionMap),
+					Matches:      make([]HostMatchConfig, 0),
 				}
 				match = nil
 				c.Hosts = append(c.Hosts, *host)
@@ -91,7 +91,7 @@ func ParseConfig(src []byte) (c *Config, err error) {
 				match = &HostMatchConfig{
 					ConditionType: args[0],
 					ConditionArgs: args[1:],
-					Options: make(ConfigOptionMap),
+					Options:       make(ConfigOptionMap),
 				}
 				host.Matches = append(host.Matches, *match)
 
