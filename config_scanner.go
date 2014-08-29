@@ -1,9 +1,5 @@
 package opensshutil
 
-import (
-	"errors"
-)
-
 // OpenSSH configuration file scanner.
 //
 // The configuration file format is pretty straight forward except for the
@@ -34,7 +30,7 @@ func newConfigScanner(src []byte) *configScanner {
 
 // Assign error.
 func (s *configScanner) error(msg string) {
-	s.err = errors.New(msg)
+	s.err = &ScanError{msg}
 }
 
 // Read the next ASCII character into s.ch.
@@ -149,7 +145,7 @@ scan:
 	// Check for expected white space.
 	if s.expectWs {
 		if s.ch != -1 && s.ch != '\n' && !isWhiteSpace(s.ch) {
-			s.error("expected white space or end-of-line")
+			s.error("expected white space or end-of-line/file")
 		}
 		s.expectWs = false
 	}
@@ -209,6 +205,8 @@ scan:
 }
 
 // Error.
+//
+// Errors are guaranteed to be of type *ScanError.
 func (s *configScanner) Err() error {
 	return s.err
 }
